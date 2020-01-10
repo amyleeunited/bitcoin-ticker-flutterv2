@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'coin_data.dart';
+import 'dart:io' show Platform;
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -6,6 +9,50 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
+
+  String selectedCurrency = 'USD';
+  CoinData myCoinData = CoinData();
+
+  DropdownButton getAndroidPicker(){
+    List<DropdownMenuItem<String>> dropDownItems = [];
+    for (String currency in currenciesList) {
+      var newItem = DropdownMenuItem(
+        child: Text(currency),
+        value: currency,
+      );
+      dropDownItems.add(newItem);
+    }
+    return DropdownButton<String>(
+      value: selectedCurrency,
+      items: dropDownItems,
+      onChanged: (value){
+        setState(() {
+          selectedCurrency = value;
+        });
+      },
+    );
+  }
+
+  CupertinoPicker getIOSPicker(){
+    List<Text> dropDownItems = [];
+    for (String currency in currenciesList) {
+      var newItem = Text(currency,
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      );
+      dropDownItems.add(newItem);
+    }
+    return CupertinoPicker(
+      backgroundColor: Colors.lightBlue,
+      itemExtent: 32.0,
+      onSelectedItemChanged: (selectedIndex) {
+      print(selectedIndex);
+      },
+      children: dropDownItems,
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,12 +73,17 @@ class _PriceScreenState extends State<PriceScreen> {
               ),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  '1 BTC = ? USD',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
+                child: GestureDetector(
+                  onTap: (){
+                    myCoinData.getCoinData();
+                    },
+                  child: Text(
+                    '1 BTC = ? USD',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -42,10 +94,14 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: null,
+            child: Platform.isIOS ? getIOSPicker() : getAndroidPicker(),
           ),
         ],
       ),
     );
   }
 }
+
+
+
+
