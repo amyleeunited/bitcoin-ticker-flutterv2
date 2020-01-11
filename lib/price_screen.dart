@@ -11,6 +11,7 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
 
   String selectedCurrency = 'USD';
+  var usDollar;
   CoinData myCoinData = CoinData();
 
   DropdownButton getAndroidPicker(){
@@ -53,6 +54,20 @@ class _PriceScreenState extends State<PriceScreen> {
       );
   }
 
+  void updateUI() async{
+
+    var currencyData = await myCoinData.getCoinData();
+    setState(() {
+      usDollar = currencyData['last'];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    updateUI();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,11 +89,11 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: GestureDetector(
-                  onTap: (){
-                    myCoinData.getCoinData();
-                    },
+                  onTap: () async{
+
+                  },
                   child: Text(
-                    '1 BTC = ? USD',
+                    '1 BTC = ${usDollar.toString()} USD',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20.0,
@@ -101,7 +116,5 @@ class _PriceScreenState extends State<PriceScreen> {
     );
   }
 }
-
-
 
 
